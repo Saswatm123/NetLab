@@ -341,7 +341,7 @@ int main()
     obj.getbignum() += 10;
     cout << endl << obj.bignum << " " << *obj.num;
     */
-
+/*
     for(auto a : obj.data_derive)
     {
         cout << endl << a;

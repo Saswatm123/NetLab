@@ -18,12 +18,12 @@
 *   BaseLayer, [Recurrent_t, NonRecurrent_t], [...]
 **/
 
-#define PARTIAL_BASE BaseLayer_t,BaseLayer_t,BaseLayer_t,BaseLayer_t
+#define PARTIAL_BASE BaseLayer_t,BaseLayer_t,BaseAggregator_t,BaseLayer_t
 #define FULLBASE     BaseLayer_t, PARTIAL_BASE
 
 //default argument is BaseLayer_t, prev declared in network.hpp
 
-template<typename LayerType, typename, typename, typename, typename>
+template<typename, typename, typename, template<class, class, class> class, typename>
 class layer
 {
     friend class network;
@@ -100,7 +100,9 @@ private:
 namespace noexplicit
 {
     //parent class for all dense-style layers with weights + activation (no LSTM/Input/FWD type layers)
-    template<typename IsLayerType>
+    template<typename FullLayerID, typename LayerType, typename ActivFuncType, typename d_ActivFuncType,
+             template<class, class, class> class AggregatorType,
+             class UpdateRoutine>
     class InheritSemiDense : public layer<NonRecurrent_t, PARTIAL_BASE>
     {
     protected:
@@ -132,7 +134,7 @@ namespace noexplicit
         *   activation function for the layer, as well as the derivative
         **/
 
-        static IsLayerType
+        static layer<LayerType,
         sigmoid(std::size_t);
 
         static IsLayerType
