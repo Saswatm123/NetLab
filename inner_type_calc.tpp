@@ -104,4 +104,50 @@ struct sub_from_arglist<remove_from_list, VarHolder<ArgPack...> >
                                       >::type type;
 };
 
+/**Type for all type checking to fail to */
+
+struct fail_comparisons;
+
+/**Minus one, floor at zero */
+
+template<unsigned N>
+struct minus_one_floor_at_zero
+{
+    static constexpr unsigned value = N-1;
+};
+
+template<>
+struct minus_one_floor_at_zero<0>
+{
+    static constexpr unsigned value = 0;
+};
+
+/**Variadic Type Holder with type get functionality */
+
+template<typename...ArgPack>
+struct VTH
+{
+    template<unsigned>
+    struct get_type
+    {
+        typedef fail_comparisons type;
+    };
+};
+
+template<typename firstarg, typename...ArgPack>
+struct VTH<firstarg, ArgPack...> : VTH<ArgPack...>
+{
+    typedef firstarg type;
+
+    template<unsigned N>
+    struct get_type
+    {
+        typedef
+        typename std::conditional<N,
+            typename VTH<ArgPack...>::template get_type<minus_one_floor_at_zero<N>::value>::type,
+            type
+                                  >::type type;
+    };
+};
+
 #endif // INNER_TYPE_CALC_H
