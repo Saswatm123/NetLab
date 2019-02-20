@@ -3,6 +3,8 @@
 
 #include <type_traits>
 
+#define PLACEHOLDER_TYPE char
+
 /**Instantiates all types to void*/
 
 template<typename...>
@@ -149,5 +151,19 @@ struct VTH<firstarg, ArgPack...> : VTH<ArgPack...>
                                   >::type type;
     };
 };
+
+/**Experimental*/
+
+template<template<typename> class check_is_same, template<typename> class enable_if_template_safe>
+using TS = typename std::conditional<0,
+                    typename hide_type_instantiation<
+                        typename std::enable_if<
+                            std::is_same<
+                                check_is_same<PLACEHOLDER_TYPE>,
+                                enable_if_template_safe<PLACEHOLDER_TYPE>
+                                         >::value,
+                                            void>
+                                                      >::type,
+                           PLACEHOLDER_TYPE>::type;
 
 #endif // INNER_TYPE_CALC_H
